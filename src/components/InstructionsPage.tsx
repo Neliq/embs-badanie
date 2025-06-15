@@ -11,24 +11,24 @@ export default function InstructionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full bg-white rounded-lg shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-2 sm:p-4">
+      <div className="max-w-2xl w-full bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-8 mx-2 sm:mx-0">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center mb-6 sm:mb-8 text-gray-800 leading-tight">
           Instrukcje Badania Naukowego
         </h1>
         
-        <div className="space-y-6 text-gray-700">
+        <div className="space-y-4 sm:space-y-6 text-gray-700">
           <div>
-            <h2 className="text-xl font-semibold mb-3">Witamy w naszym badaniu naukowym!</h2>
-            <p className="leading-relaxed">
+            <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">Witamy w naszym badaniu naukowym!</h2>
+            <p className="leading-relaxed text-sm sm:text-base">
               Dziękujemy za udział w tym badaniu naukowym. Twój udział jest dobrowolny i anonimowy. 
               Badanie składa się z kilku części i powinno zająć około 10-15 minut.
             </p>
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-2">Co będziesz robić:</h3>
-            <ol className="list-decimal list-inside space-y-2 pl-4">
+            <h3 className="text-base sm:text-lg font-semibold mb-2">Co będziesz robić:</h3>
+            <ol className="list-decimal list-inside space-y-1 sm:space-y-2 pl-2 sm:pl-4 text-sm sm:text-base">
               <li>Odpowiesz na serię pytań o opiniach używając skali 1-4</li>
               <li>Obejrzysz i ocenisz serię zdjęć</li>
               <li>Podasz podstawowe informacje demograficzne</li>
@@ -36,8 +36,8 @@ export default function InstructionsPage() {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-2">Ważne informacje:</h3>
-            <ul className="list-disc list-inside space-y-2 pl-4">
+            <h3 className="text-base sm:text-lg font-semibold mb-2">Ważne informacje:</h3>
+            <ul className="list-disc list-inside space-y-1 sm:space-y-2 pl-2 sm:pl-4 text-sm sm:text-base">
               <li>Twoje odpowiedzi są całkowicie anonimowe</li>
               <li>Możesz wycofać się z badania w dowolnym momencie</li>
               <li>Prosimy o szczere odpowiedzi na wszystkie pytania</li>
@@ -45,18 +45,18 @@ export default function InstructionsPage() {
             </ul>
           </div>
 
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <p className="text-sm">
+          <div className="bg-blue-50 p-3 sm:p-4 rounded-lg">
+            <p className="text-xs sm:text-sm leading-relaxed">
               <strong>Wykorzystanie danych:</strong> Zebrane dane będą wykorzystywane wyłącznie do celów badawczych. 
               Żadne dane umożliwiające identyfikację osoby nie będą zbierane ani przechowywane.
             </p>
           </div>
         </div>
 
-        <div className="mt-8 text-center">
+        <div className="mt-6 sm:mt-8 flex justify-center">
           <Button 
             onClick={handleStart}
-            className="px-8 py-3 text-lg"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg font-medium"
             size="lg"
           >
             Rozumiem i zgadzam się na udział

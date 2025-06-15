@@ -47,19 +47,19 @@ export default function ImageRatingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-8">
+          <div className="text-center mb-4 sm:mb-6">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-2">
               Ocena Zdjęcia
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm sm:text-base">
               Zdjęcie {imageNumber} z {totalImages}
             </p>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {/* Image Display */}
             <div className="flex justify-center">
               <div className="relative w-full max-w-2xl aspect-video bg-gray-100 rounded-lg overflow-hidden">
@@ -79,10 +79,10 @@ export default function ImageRatingPage() {
                   }}
                 />
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100" style={{display: 'none'}}>
-                  <div className="text-center">
-                    <div className="w-24 h-24 bg-gray-300 rounded-lg mx-auto mb-4"></div>
-                    <p className="text-gray-600">Zdjęcie: {currentImageData.imagePath}</p>
-                    <p className="text-sm text-gray-500 mt-2">
+                  <div className="text-center p-4">
+                    <div className="w-16 sm:w-24 h-16 sm:h-24 bg-gray-300 rounded-lg mx-auto mb-4"></div>
+                    <p className="text-gray-600 text-sm sm:text-base">Zdjęcie: {currentImageData.imagePath}</p>
+                    <p className="text-xs sm:text-sm text-gray-500 mt-2">
                       (Nie można załadować zdjęcia)
                     </p>
                   </div>
@@ -91,17 +91,22 @@ export default function ImageRatingPage() {
             </div>
 
             {/* Rating Question */}
-            <div className="space-y-6">
-              <div className="text-center">
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="text-center px-2">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 leading-relaxed">
                   Jak prawdopodobne jest, że to zdjęcie zostało wygenerowane przez AI?
                 </h2>
-                <p className="text-gray-600">
+                <p className="text-gray-600 text-sm sm:text-base">
                   Przesuń suwak, aby wskazać swoją ocenę
                 </p>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex justify-between text-xs sm:text-sm text-gray-500 px-1">
+                  <span>Na pewno prawdziwe</span>
+                  <span>Na pewno AI</span>
+                </div>
+                
                 <Slider
                   value={aiProbability}
                   onValueChange={setAiProbability}
@@ -111,12 +116,10 @@ export default function ImageRatingPage() {
                   className="w-full"
                 />
                 
-                <div className="flex justify-between text-sm text-gray-600">
-                  <span>0% - Na pewno prawdziwe</span>
-                  <span className="font-medium text-gray-800 text-lg">
+                <div className="text-center">
+                  <span className="text-blue-600 font-semibold text-base sm:text-lg bg-blue-50 px-3 py-1 rounded-full">
                     {aiProbability[0]}% Wygenerowane AI
                   </span>
-                  <span>100% - Na pewno AI</span>
                 </div>
               </div>
             </div>
@@ -130,10 +133,10 @@ export default function ImageRatingPage() {
             </div>
 
             {/* Navigation */}
-            <div className="text-center">
+            <div className="flex justify-center">
               <Button 
                 onClick={handleNext}
-                className="px-8 py-3 text-lg"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg font-medium"
                 size="lg"
               >
                 {isLastImage ? 'Przejdź do danych demograficznych' : 'Następne zdjęcie'}

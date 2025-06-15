@@ -10,10 +10,8 @@ export default function CompletePage() {
     // Create CSV header
     const csvRows = [];
     
-    // Header row
+    // Header row (removed participant ID and group)
     csvRows.push([
-      'id_uczestnika',
-      'grupa',
       'id_pytania',
       'ocena_pytania',
       'sciezka_zdjecia',
@@ -38,8 +36,6 @@ export default function CompletePage() {
       const questionResponse = state.data.opinionResponses[imageIndex] || { questionId: '', rating: '' };
       
       csvRows.push([
-        state.data.participantId,
-        state.data.group,
         questionResponse.questionId,
         questionResponse.rating,
         `"${imageRating.imagePath}"`, // Quote the path in case it contains commas
@@ -59,8 +55,6 @@ export default function CompletePage() {
       for (let i = state.data.imageRatings.length; i < state.data.opinionResponses.length; i++) {
         const questionResponse = state.data.opinionResponses[i];
         csvRows.push([
-          state.data.participantId,
-          state.data.group,
           questionResponse.questionId,
           questionResponse.rating,
           '', // No image
@@ -82,7 +76,7 @@ export default function CompletePage() {
     const url = URL.createObjectURL(csvBlob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `experiment-data-${state.data.participantId}.csv`;
+    link.download = `experiment-data-${Date.now()}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -94,37 +88,37 @@ export default function CompletePage() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full bg-white rounded-lg shadow-lg p-8 text-center">
-        <div className="mb-8">
-          <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-2 sm:p-4">
+      <div className="max-w-2xl w-full bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-8 text-center mx-2 sm:mx-0">
+        <div className="mb-6 sm:mb-8">
+          <div className="w-16 h-16 sm:w-24 sm:h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 sm:w-12 sm:h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
           
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-3 sm:mb-4">
             Dziękujemy za udział!
           </h1>
           
-          <p className="text-lg text-gray-600 mb-6">
+          <p className="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6 px-2 leading-relaxed">
             Pomyślnie ukończyłeś badanie naukowe. Twoje odpowiedzi zostały zapisane i przyczynią się do ważnych badań.
           </p>
         </div>
 
-        <div className="bg-gray-50 rounded-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Podsumowanie badania</h2>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
+        <div className="bg-gray-50 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4">Podsumowanie badania</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm sm:text-base">
+            <div className="text-center sm:text-left">
               <span className="font-medium">Odpowiedzi na pytania:</span>
               <p className="text-gray-600">{state.data.opinionResponses.length}</p>
             </div>
-            <div>
+            <div className="text-center sm:text-left">
               <span className="font-medium">Ocenione zdjęcia:</span>
               <p className="text-gray-600">{state.data.imageRatings.length}</p>
             </div>
             {duration > 0 && (
-              <div className="col-span-2">
+              <div className="col-span-1 sm:col-span-2 text-center sm:text-left">
                 <span className="font-medium">Czas trwania:</span>
                 <p className="text-gray-600">{duration} minut</p>
               </div>
@@ -133,22 +127,23 @@ export default function CompletePage() {
         </div>
 
         <div className="space-y-4">
-          <p className="text-gray-600">
-            Twoje anonimowe dane zostały zapisane. Możesz je pobrać w różnych formatach poniżej.
+          <p className="text-gray-600 text-sm sm:text-base px-2 leading-relaxed">
+            Twoje anonimowe dane zostały zapisane. Możesz je pobrać poniżej.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex justify-center">
             <Button 
               onClick={handleDownloadCSV}
-              className="px-6 py-2"
+              className="w-full sm:w-auto px-6 py-3 text-base font-medium"
+              size="lg"
             >
               Pobierz dane CSV
             </Button>
           </div>
         </div>
 
-        <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-          <p className="text-sm text-blue-800 mt-2">
+        <div className="mt-6 sm:mt-8 p-3 sm:p-4 bg-blue-50 rounded-lg">
+          <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
             Twoje dane zostaną przeanalizowane wraz z odpowiedziami innych uczestników, aby pomóc nam zrozumieć ludzką percepcję i podejmowanie decyzji. Wyniki mogą zostać opublikowane w czasopismach naukowych przy zachowaniu pełnej anonimowości.
           </p>
         </div>

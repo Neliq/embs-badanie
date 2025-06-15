@@ -34,17 +34,17 @@ export default function DemographicsPage() {
                      demographics.education;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4">
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-8">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center mb-2 text-gray-800">
             Informacje Demograficzne
           </h1>
-          <p className="text-center text-gray-600 mb-8">
+          <p className="text-center text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base px-2 leading-relaxed">
             Proszę podaj podstawowe informacje o sobie. Te informacje są anonimowe i będą wykorzystywane wyłącznie do celów badawczych.
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             {/* Age */}
             <div className="space-y-2">
               <Label htmlFor="age" className="text-sm font-medium">
@@ -58,6 +58,7 @@ export default function DemographicsPage() {
                 value={demographics.age || ''}
                 onChange={(e) => handleInputChange('age', parseInt(e.target.value) || 0)}
                 placeholder="Podaj swój wiek"
+                className="w-full text-base sm:text-sm"
                 required
               />
             </div>
@@ -71,7 +72,7 @@ export default function DemographicsPage() {
                 id="gender"
                 value={demographics.gender}
                 onChange={(e) => handleInputChange('gender', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                 required
               >
                 <option value="">Wybierz swoją płeć</option>
@@ -92,7 +93,7 @@ export default function DemographicsPage() {
                 id="education"
                 value={demographics.education}
                 onChange={(e) => handleInputChange('education', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 text-base sm:text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                 required
               >
                 <option value="">Wybierz poziom wykształcenia</option>
@@ -107,17 +108,17 @@ export default function DemographicsPage() {
               </select>
             </div>
 
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <p className="text-sm text-blue-800">
+            <div className="bg-blue-50 p-3 sm:p-4 rounded-lg">
+              <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
                 <strong>Ochrona prywatności:</strong> Wszystkie podane informacje są anonimowe i będą wykorzystywane wyłącznie do celów badawczych. Żadne dane umożliwiające identyfikację osoby nie będą przechowywane ani udostępniane.
               </p>
             </div>
 
-            <div className="text-center">
+            <div className="flex justify-center pt-2 sm:pt-4">
               <Button 
                 type="submit"
                 disabled={!isFormValid}
-                className="px-8 py-3 text-lg"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg font-medium"
                 size="lg"
               >
                 Zakończ badanie
