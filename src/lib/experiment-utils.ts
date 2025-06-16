@@ -9,7 +9,8 @@ export function assignGroup(): 'matching' | 'opposite' {
 }
 
 export function getImagesByResponses(
-  opinionResponses: OpinionResponse[]
+  opinionResponses: OpinionResponse[],
+  group: 'matching' | 'opposite'
 ): ImageData[] {
   const imageData: ImageData[] = [];
   
@@ -17,12 +18,22 @@ export function getImagesByResponses(
   opinionResponses.forEach((response) => {
     const isHighAgreement = response.rating >= 3; // 3-4 = high agreement
     
-    // Determine folder based on agreement level
+    // Determine folder based on agreement level and group
     let folderPrefix: string;
-    if (isHighAgreement) {
-      folderPrefix = 'matching'; // User agrees, show matching images
+    if (group === 'matching') {
+      // Normal behavior: high agreement -> matching, low agreement -> not-matching
+      if (isHighAgreement) {
+        folderPrefix = 'matching'; // User agrees, show matching images
+      } else {
+        folderPrefix = 'not-matching'; // User disagrees, show opposite images
+      }
     } else {
-      folderPrefix = 'not-matching'; // User disagrees, show opposite images
+      // Opposite behavior: high agreement -> not-matching, low agreement -> matching
+      if (isHighAgreement) {
+        folderPrefix = 'not-matching'; // User agrees, but show opposite images
+      } else {
+        folderPrefix = 'matching'; // User disagrees, but show matching images
+      }
     }
     
     // Add BOTH generated and authentic versions for this question

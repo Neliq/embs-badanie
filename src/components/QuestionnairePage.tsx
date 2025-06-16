@@ -19,7 +19,7 @@ const getScaleLabel = (rating: number): string => {
 };
 
 export default function QuestionnairePage() {
-  const { dispatch } = useExperiment();
+  const { state, dispatch } = useExperiment();
   const [questions] = useState<Question[]>(questionsData);
   const [responses, setResponses] = useState<OpinionResponse[]>(
     questions.map(q => ({ questionId: q.id, rating: 2 }))
@@ -38,8 +38,8 @@ export default function QuestionnairePage() {
   const handleSubmit = () => {
     dispatch({ type: 'SET_OPINION_RESPONSES', responses });
     
-    // Generate images based on responses
-    const imageData = getImagesByResponses(responses);
+    // Generate images based on responses and group
+    const imageData = getImagesByResponses(responses, state.data.group);
     dispatch({ type: 'SET_IMAGES', images: imageData });
     
     dispatch({ type: 'SET_STEP', step: 'images' });
