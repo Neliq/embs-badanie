@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { ExperimentData, ExperimentStep, OpinionResponse, DemographicData, ImageRating, ImageData } from '@/types/experiment';
-import { generateParticipantId, assignGroup } from '@/lib/experiment-utils';
+import { generateParticipantId, assignGroup5 } from '@/lib/experiment-utils';
 
 interface ExperimentState {
   data: ExperimentData;
@@ -23,7 +23,7 @@ type ExperimentAction =
 const initialState: ExperimentState = {
   data: {
     participantId: generateParticipantId(),
-    group: assignGroup(),
+    group: assignGroup5(), // Use new 5-group assignment
     opinionResponses: [],
     imageRatings: [],
     demographics: {
@@ -42,6 +42,10 @@ const initialState: ExperimentState = {
 function experimentReducer(state: ExperimentState, action: ExperimentAction): ExperimentState {
   switch (action.type) {
     case 'SET_STEP':
+      // Reset image index for pretest or images step
+      if (action.step === 'pretest' || action.step === 'images') {
+        return { ...state, currentStep: action.step, currentImageIndex: 0 };
+      }
       return { ...state, currentStep: action.step };
     
     case 'SET_OPINION_RESPONSES':

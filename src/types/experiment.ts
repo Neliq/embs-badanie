@@ -26,9 +26,16 @@ export interface ImageRating {
   isActuallyAI: boolean;
 }
 
+export type ExperimentGroup =
+  | 'pretest-matching'
+  | 'pretest-not-matching'
+  | 'no-pretest-matching'
+  | 'no-pretest-not-matching'
+  | 'all-images-no-questionnaire';
+
 export interface ExperimentData {
   participantId: string;
-  group: 'matching' | 'opposite';
+  group: ExperimentGroup;
   opinionResponses: OpinionResponse[];
   imageRatings: ImageRating[];
   demographics: DemographicData;
@@ -39,6 +46,7 @@ export interface ExperimentData {
 export type ExperimentStep = 
   | 'instructions'
   | 'questionnaire'
+  | 'pretest'
   | 'images'
   | 'demographics'
   | 'complete';

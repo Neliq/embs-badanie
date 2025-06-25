@@ -102,7 +102,7 @@ export default function CompletePage() {
           </h1>
           
           <p className="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6 px-2 leading-relaxed">
-            Pomyślnie ukończyłeś badanie naukowe. Twoje odpowiedzi zostały zapisane i przyczynią się do ważnych badań.
+            Pomyślnie ukończyłeś badanie naukowe. Twoje odpowiedzi zostały zapisane i przyczynią się do ważnych badań. Celem badania było sprawdzenie, jak osobiste opinie wpływają na percepcję zdjęć wygenerowanych przez AI. Twoje dane są anonimowe i zostaną użyte tylko do celów badawczych.
           </p>
         </div>
 

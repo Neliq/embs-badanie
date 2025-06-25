@@ -2,12 +2,38 @@
 
 import { Button } from '@/components/ui/button';
 import { useExperiment } from '@/contexts/ExperimentContext';
+import { getImagesByResponses } from '@/lib/experiment-utils';
+import questionsData from '@/data/questions.json';
 
 export default function InstructionsPage() {
-  const { dispatch } = useExperiment();
+  const { state, dispatch } = useExperiment();
 
   const handleStart = () => {
-    dispatch({ type: 'SET_STEP', step: 'questionnaire' });
+    // Decide first step based on group
+    if (
+      state.data.group === 'pretest-matching' ||
+      state.data.group === 'pretest-not-matching'
+    ) {
+      dispatch({ type: 'SET_STEP', step: 'pretest' });
+    } else if (
+      state.data.group === 'no-pretest-matching' ||
+      state.data.group === 'no-pretest-not-matching'
+    ) {
+      dispatch({ type: 'SET_STEP', step: 'questionnaire' });
+    } else if (state.data.group === 'all-images-no-questionnaire') {
+      // Skip pretest for this group, go directly to images
+      // Set all images: pretest (test-generated/test-authentic) + matching + not-matching
+      const allImages = [
+        { imagePath: '/images/test-generated/1.png', isActuallyAI: true },
+        { imagePath: '/images/test-authentic/1.png', isActuallyAI: false },
+        ...getImagesByResponses((questionsData as { id: number }[]).map(q => ({ questionId: q.id, rating: 3 })), 'matching'),
+        ...getImagesByResponses((questionsData as { id: number }[]).map(q => ({ questionId: q.id, rating: 3 })), 'opposite'),
+      ];
+      dispatch({ type: 'SET_IMAGES', images: allImages });
+      dispatch({ type: 'SET_STEP', step: 'images' });
+    } else {
+      dispatch({ type: 'SET_STEP', step: 'questionnaire' });
+    }
   };
 
   return (

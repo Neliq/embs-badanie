@@ -23,12 +23,16 @@ export default function ImageRatingPage() {
       aiProbability: aiProbability[0],
       isActuallyAI: currentImageData.isActuallyAI
     };
-    
     dispatch({ type: 'ADD_IMAGE_RATING', rating });
 
     if (isLastImage) {
-      // Move to demographics
-      dispatch({ type: 'SET_STEP', step: 'demographics' });
+      // For group all-images-no-questionnaire, skip demographics
+      if (state.data.group === 'all-images-no-questionnaire') {
+        dispatch({ type: 'COMPLETE_EXPERIMENT' });
+      } else {
+        // Move to demographics
+        dispatch({ type: 'SET_STEP', step: 'demographics' });
+      }
     } else {
       // Move to next image
       dispatch({ type: 'NEXT_IMAGE' });

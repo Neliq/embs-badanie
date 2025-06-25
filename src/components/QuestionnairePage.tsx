@@ -37,11 +37,34 @@ export default function QuestionnairePage() {
 
   const handleSubmit = () => {
     dispatch({ type: 'SET_OPINION_RESPONSES', responses });
-    
+
+    // For group 'all-images-no-questionnaire', skip images generation and go to images step
+    if (state.data.group === 'all-images-no-questionnaire') {
+      // Show all images: pretest, matching, not-matching
+      const allImages = [
+        // Pretest images
+        { imagePath: '/images/test-generated/1.png', isActuallyAI: true },
+        { imagePath: '/images/test-authentic/1.png', isActuallyAI: false },
+        // Matching images
+        ...getImagesByResponses(responses, 'matching'),
+        // Not-matching images
+        ...getImagesByResponses(responses, 'opposite'),
+      ];
+      dispatch({ type: 'SET_IMAGES', images: allImages });
+      dispatch({ type: 'SET_STEP', step: 'images' });
+      return;
+    }
+
     // Generate images based on responses and group
-    const imageData = getImagesByResponses(responses, state.data.group);
+    let imageData;
+    if (state.data.group === 'pretest-matching' || state.data.group === 'no-pretest-matching') {
+      imageData = getImagesByResponses(responses, 'matching');
+    } else if (state.data.group === 'pretest-not-matching' || state.data.group === 'no-pretest-not-matching') {
+      imageData = getImagesByResponses(responses, 'opposite');
+    } else {
+      imageData = getImagesByResponses(responses, 'matching');
+    }
     dispatch({ type: 'SET_IMAGES', images: imageData });
-    
     dispatch({ type: 'SET_STEP', step: 'images' });
   };
 

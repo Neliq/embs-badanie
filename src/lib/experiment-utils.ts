@@ -8,6 +8,28 @@ export function assignGroup(): 'matching' | 'opposite' {
   return Math.random() < 0.5 ? 'matching' : 'opposite';
 }
 
+export function assignGroup5():
+  | 'pretest-matching'
+  | 'pretest-not-matching'
+  | 'no-pretest-matching'
+  | 'no-pretest-not-matching'
+  | 'all-images-no-questionnaire' {
+  const groups = [
+    'pretest-matching',
+    'pretest-not-matching',
+    'no-pretest-matching',
+    'no-pretest-not-matching',
+    'all-images-no-questionnaire',
+  ];
+  const idx = Math.floor(Math.random() * groups.length);
+  return groups[idx] as
+    | 'pretest-matching'
+    | 'pretest-not-matching'
+    | 'no-pretest-matching'
+    | 'no-pretest-not-matching'
+    | 'all-images-no-questionnaire';
+}
+
 export function getImagesByResponses(
   opinionResponses: OpinionResponse[],
   group: 'matching' | 'opposite'

@@ -6,6 +6,7 @@ import QuestionnairePage from '@/components/QuestionnairePage';
 import ImageRatingPage from '@/components/ImageRatingPage';
 import DemographicsPage from '@/components/DemographicsPage';
 import CompletePage from '@/components/CompletePage';
+import PretestPage from '@/components/PretestPage';
 
 function ExperimentContent() {
   const { state } = useExperiment();
@@ -13,6 +14,8 @@ function ExperimentContent() {
   switch (state.currentStep) {
     case 'instructions':
       return <InstructionsPage />;
+    case 'pretest':
+      return <PretestPage />;
     case 'questionnaire':
       return <QuestionnairePage />;
     case 'images':
