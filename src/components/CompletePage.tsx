@@ -10,8 +10,10 @@ export default function CompletePage() {
     // Create CSV header
     const csvRows = [];
     
-    // Header row (removed participant ID and group)
+    // Header row (now includes participant ID and group)
     csvRows.push([
+      'uczestnik_id',
+      'grupa',
       'id_pytania',
       'ocena_pytania',
       'sciezka_zdjecia',
@@ -36,6 +38,8 @@ export default function CompletePage() {
       const questionResponse = state.data.opinionResponses[imageIndex] || { questionId: '', rating: '' };
       
       csvRows.push([
+        state.data.participantId,
+        state.data.group,
         questionResponse.questionId,
         questionResponse.rating,
         `"${imageRating.imagePath}"`, // Quote the path in case it contains commas
@@ -55,6 +59,8 @@ export default function CompletePage() {
       for (let i = state.data.imageRatings.length; i < state.data.opinionResponses.length; i++) {
         const questionResponse = state.data.opinionResponses[i];
         csvRows.push([
+          state.data.participantId,
+          state.data.group,
           questionResponse.questionId,
           questionResponse.rating,
           '', // No image
