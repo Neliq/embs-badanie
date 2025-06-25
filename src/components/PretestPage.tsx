@@ -39,6 +39,7 @@ export default function PretestPage() {
   const { state, dispatch } = useExperiment();
   const [aiProbability, setAiProbability] = useState([50]);
   const [loading, setLoading] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const pretestImages = useMemo(() => getPretestImages(), []);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const currentImageData = pretestImages[state.currentImageIndex] || null;
@@ -47,6 +48,7 @@ export default function PretestPage() {
   const totalImages = pretestImages.length;
 
   const handleNext = () => {
+    setImageLoaded(false);
     setLoading(true);
     // Save the current rating
     const rating: ImageRating = {
@@ -124,8 +126,14 @@ export default function PretestPage() {
                   alt={`Pretest zdjęcie ${imageNumber}`}
                   fill
                   className="object-contain"
-                  onLoad={() => setLoading(false)}
-                  onError={() => setLoading(false)}
+                  onLoad={() => {
+                    setImageLoaded(true);
+                    setLoading(false);
+                  }}
+                  onError={() => {
+                    setImageLoaded(true);
+                    setLoading(false);
+                  }}
                 />
               </div>
             </div>
@@ -158,9 +166,9 @@ export default function PretestPage() {
                 onClick={handleNext}
                 className="w-full sm:w-auto px-6 py-3 text-base font-medium"
                 size="lg"
-                disabled={loading}
+                disabled={loading || !imageLoaded}
               >
-                {loading ? 'Ładowanie...' : 'Dalej'}
+                {(loading || !imageLoaded) ? 'Ładowanie...' : 'Dalej'}
               </Button>
             </div>
           </div>
