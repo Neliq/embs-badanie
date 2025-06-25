@@ -1,5 +1,5 @@
 // 'use client';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useExperiment } from '@/contexts/ExperimentContext';
 import { ImageRating } from '@/types/experiment';
 import Image from 'next/image';
@@ -38,59 +38,65 @@ function getPretestImages() {
 export default function PretestPage() {
   const { state, dispatch } = useExperiment();
   const [aiProbability, setAiProbability] = useState([50]);
+  const [loading, setLoading] = useState(false);
   const pretestImages = useMemo(() => getPretestImages(), []);
+  const imageRef = useRef<HTMLImageElement | null>(null);
   const currentImageData = pretestImages[state.currentImageIndex] || null;
   const isLastImage = state.currentImageIndex >= pretestImages.length - 1;
   const imageNumber = state.currentImageIndex + 1;
   const totalImages = pretestImages.length;
 
   const handleNext = () => {
+    setLoading(true);
     // Save the current rating
     const rating: ImageRating = {
       imagePath: currentImageData.imagePath,
       aiProbability: aiProbability[0],
       isActuallyAI: currentImageData.isActuallyAI,
     };
-    dispatch({ type: 'ADD_IMAGE_RATING', rating });
-    if (isLastImage) {
-      // Move to next step depending on group
-      if (state.data.group === 'pretest-matching' || state.data.group === 'pretest-not-matching') {
-        // After pretest, go to main images (not questionnaire)
-        let imageData;
-        if (state.data.group === 'pretest-matching') {
-          imageData = getImagesByResponses(
-            state.data.opinionResponses,
-            'matching'
-          );
+    setTimeout(() => {
+      dispatch({ type: 'ADD_IMAGE_RATING', rating });
+      if (isLastImage) {
+        // Move to next step depending on group
+        if (state.data.group === 'pretest-matching' || state.data.group === 'pretest-not-matching') {
+          // After pretest, go to main images (not questionnaire)
+          let imageData;
+          if (state.data.group === 'pretest-matching') {
+            imageData = getImagesByResponses(
+              state.data.opinionResponses,
+              'matching'
+            );
+          } else {
+            imageData = getImagesByResponses(
+              state.data.opinionResponses,
+              'opposite'
+            );
+          }
+          dispatch({ type: 'SET_IMAGES', images: imageData });
+          dispatch({ type: 'SET_STEP', step: 'images' });
+        } else if (state.data.group === 'all-images-no-questionnaire') {
+          // Set all images: pretest, matching, not-matching
+          const allImages = [
+            // Pretest images
+            { imagePath: '/images/test-generated/1.png', isActuallyAI: true },
+            { imagePath: '/images/test-authentic/1.png', isActuallyAI: false },
+            // Matching images
+            ...getImagesByResponses(questionsData.map(q => ({ questionId: q.id, rating: 3 })), 'matching'),
+            // Not-matching images
+            ...getImagesByResponses(questionsData.map(q => ({ questionId: q.id, rating: 3 })), 'opposite'),
+          ];
+          dispatch({ type: 'SET_IMAGES', images: allImages });
+          dispatch({ type: 'SET_STEP', step: 'images' });
         } else {
-          imageData = getImagesByResponses(
-            state.data.opinionResponses,
-            'opposite'
-          );
+          // For groups that do not have main test, go to demographics
+          dispatch({ type: 'SET_STEP', step: 'demographics' });
         }
-        dispatch({ type: 'SET_IMAGES', images: imageData });
-        dispatch({ type: 'SET_STEP', step: 'images' });
-      } else if (state.data.group === 'all-images-no-questionnaire') {
-        // Set all images: pretest, matching, not-matching
-        const allImages = [
-          // Pretest images
-          { imagePath: '/images/test-generated/1.png', isActuallyAI: true },
-          { imagePath: '/images/test-authentic/1.png', isActuallyAI: false },
-          // Matching images
-          ...getImagesByResponses(questionsData.map(q => ({ questionId: q.id, rating: 3 })), 'matching'),
-          // Not-matching images
-          ...getImagesByResponses(questionsData.map(q => ({ questionId: q.id, rating: 3 })), 'opposite'),
-        ];
-        dispatch({ type: 'SET_IMAGES', images: allImages });
-        dispatch({ type: 'SET_STEP', step: 'images' });
       } else {
-        // For groups that do not have main test, go to demographics
-        dispatch({ type: 'SET_STEP', step: 'demographics' });
+        dispatch({ type: 'NEXT_IMAGE' });
+        setAiProbability([50]);
       }
-    } else {
-      dispatch({ type: 'NEXT_IMAGE' });
-      setAiProbability([50]);
-    }
+      setLoading(false);
+    }, 300); // Simulate loading, can be replaced with real image onLoad
   };
 
   if (!currentImageData) {
@@ -113,10 +119,13 @@ export default function PretestPage() {
             <div className="flex justify-center">
               <div className="relative w-full max-w-2xl aspect-video bg-gray-100 rounded-lg overflow-hidden">
                 <Image 
+                  ref={imageRef}
                   src={currentImageData.imagePath} 
                   alt={`Pretest zdjęcie ${imageNumber}`}
                   fill
                   className="object-contain"
+                  onLoad={() => setLoading(false)}
+                  onError={() => setLoading(false)}
                 />
               </div>
             </div>
@@ -145,8 +154,13 @@ export default function PretestPage() {
               </div>
             </div>
             <div className="mt-6 flex justify-center">
-              <Button onClick={handleNext} className="w-full sm:w-auto px-6 py-3 text-base font-medium" size="lg">
-                {'Dalej'}
+              <Button 
+                onClick={handleNext}
+                className="w-full sm:w-auto px-6 py-3 text-base font-medium"
+                size="lg"
+                disabled={loading}
+              >
+                {loading ? 'Ładowanie...' : 'Dalej'}
               </Button>
             </div>
           </div>

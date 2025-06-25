@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useExperiment } from '@/contexts/ExperimentContext';
@@ -10,6 +10,8 @@ import Image from 'next/image';
 export default function ImageRatingPage() {
   const { state, dispatch } = useExperiment();
   const [aiProbability, setAiProbability] = useState([50]);
+  const [loading, setLoading] = useState(false);
+  const imageRef = useRef<HTMLImageElement | null>(null);
   
   const currentImageData = state.images[state.currentImageIndex];
   const isLastImage = state.currentImageIndex >= state.images.length - 1;
@@ -17,22 +19,23 @@ export default function ImageRatingPage() {
   const totalImages = state.images.length;
 
   const handleNext = () => {
+    setLoading(true);
     // Save the current rating
     const rating: ImageRating = {
       imagePath: currentImageData.imagePath,
       aiProbability: aiProbability[0],
       isActuallyAI: currentImageData.isActuallyAI
     };
-    dispatch({ type: 'ADD_IMAGE_RATING', rating });
-
-    if (isLastImage) {
-      // After last image, always go to demographics for all groups
-      dispatch({ type: 'SET_STEP', step: 'demographics' });
-    } else {
-      // Move to next image
-      dispatch({ type: 'NEXT_IMAGE' });
-      setAiProbability([50]); // Reset slider for next image
-    }
+    setTimeout(() => {
+      dispatch({ type: 'ADD_IMAGE_RATING', rating });
+      if (isLastImage) {
+        dispatch({ type: 'SET_STEP', step: 'demographics' });
+      } else {
+        dispatch({ type: 'NEXT_IMAGE' });
+        setAiProbability([50]);
+      }
+      setLoading(false);
+    }, 300); // Simulate loading, can be adjusted or replaced with real image onLoad
   };
 
   if (!currentImageData) {
@@ -63,10 +66,12 @@ export default function ImageRatingPage() {
             <div className="flex justify-center">
               <div className="relative w-full max-w-2xl aspect-video bg-gray-100 rounded-lg overflow-hidden">
                 <Image 
+                  ref={imageRef}
                   src={currentImageData.imagePath} 
                   alt={`Zdjęcie badania ${imageNumber}`}
                   fill
                   className="object-contain"
+                  onLoad={() => setLoading(false)}
                   onError={(e) => {
                     // Fallback if image fails to load
                     const target = e.currentTarget;
@@ -75,6 +80,7 @@ export default function ImageRatingPage() {
                       target.style.display = 'none';
                       fallback.style.display = 'block';
                     }
+                    setLoading(false);
                   }}
                 />
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100" style={{display: 'none'}}>
@@ -137,8 +143,9 @@ export default function ImageRatingPage() {
                 onClick={handleNext}
                 className="w-full sm:w-auto px-6 sm:px-8 py-3 text-base sm:text-lg font-medium"
                 size="lg"
+                disabled={loading}
               >
-                {isLastImage ? 'Przejdź do danych demograficznych' : 'Następne zdjęcie'}
+                {loading ? 'Ładowanie...' : (isLastImage ? 'Przejdź do danych demograficznych' : 'Następne zdjęcie')}
               </Button>
             </div>
           </div>
