@@ -111,7 +111,7 @@ export default function PretestPage() {
         <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-8">
           <div className="text-center mb-4 sm:mb-6">
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-2">
-              Pretest: Ocena Zdjęcia
+              Ocena Zdjęcia
             </h1>
             <p className="text-gray-600 text-sm sm:text-base">
               Zdjęcie {imageNumber} z {totalImages}
@@ -159,7 +159,19 @@ export default function PretestPage() {
                   step={1}
                   className="w-full"
                 />
+                <div className="text-center">
+                  <span className="text-blue-600 font-semibold text-base sm:text-lg bg-blue-50 px-3 py-1 rounded-full">
+                    {aiProbability[0]}% Wygenerowane AI
+                  </span>
+                </div>
               </div>
+            </div>
+            {/* Progress Bar */}
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${(imageNumber / totalImages) * 100}%` }}
+              ></div>
             </div>
             <div className="mt-6 flex justify-center">
               <Button 
