@@ -26,13 +26,8 @@ export default function ImageRatingPage() {
     dispatch({ type: 'ADD_IMAGE_RATING', rating });
 
     if (isLastImage) {
-      // For group all-images-no-questionnaire, skip demographics
-      if (state.data.group === 'all-images-no-questionnaire') {
-        dispatch({ type: 'COMPLETE_EXPERIMENT' });
-      } else {
-        // Move to demographics
-        dispatch({ type: 'SET_STEP', step: 'demographics' });
-      }
+      // After last image, always go to demographics for all groups
+      dispatch({ type: 'SET_STEP', step: 'demographics' });
     } else {
       // Move to next image
       dispatch({ type: 'NEXT_IMAGE' });

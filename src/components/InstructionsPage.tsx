@@ -14,7 +14,7 @@ export default function InstructionsPage() {
       state.data.group === 'pretest-matching' ||
       state.data.group === 'pretest-not-matching'
     ) {
-      dispatch({ type: 'SET_STEP', step: 'pretest' });
+      dispatch({ type: 'SET_STEP', step: 'questionnaire' }); // questionnaire first
     } else if (
       state.data.group === 'no-pretest-matching' ||
       state.data.group === 'no-pretest-not-matching'
@@ -22,14 +22,35 @@ export default function InstructionsPage() {
       dispatch({ type: 'SET_STEP', step: 'questionnaire' });
     } else if (state.data.group === 'all-images-no-questionnaire') {
       // Skip pretest for this group, go directly to images
-      // Set all images: pretest (test-generated/test-authentic) + matching + not-matching
+      // Dynamically use all images from test-generated and test-authentic
+      const testGenerated = ["1.png", "2.png", "3.png"].map(file => ({
+        imagePath: `/images/test-generated/${file}`,
+        isActuallyAI: true
+      }));
+      const testAuthentic = ["1.png", "2.png", "3.png"].map(file => ({
+        imagePath: `/images/test-authentic/${file}`,
+        isActuallyAI: false
+      }));
       const allImages = [
-        { imagePath: '/images/test-generated/1.png', isActuallyAI: true },
-        { imagePath: '/images/test-authentic/1.png', isActuallyAI: false },
+        ...testGenerated,
+        ...testAuthentic,
         ...getImagesByResponses((questionsData as { id: number }[]).map(q => ({ questionId: q.id, rating: 3 })), 'matching'),
         ...getImagesByResponses((questionsData as { id: number }[]).map(q => ({ questionId: q.id, rating: 3 })), 'opposite'),
       ];
-      dispatch({ type: 'SET_IMAGES', images: allImages });
+      // Shuffle all images so order is random and each image appears only once
+      const uniqueMap = new Map();
+      allImages.forEach(img => {
+        if (!uniqueMap.has(img.imagePath)) {
+          uniqueMap.set(img.imagePath, img);
+        }
+      });
+      const unique = Array.from(uniqueMap.values());
+      for (let i = unique.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [unique[i], unique[j]] = [unique[j], unique[i]];
+      }
+      // After showing all images, go to demographics for all groups
+      dispatch({ type: 'SET_IMAGES', images: unique });
       dispatch({ type: 'SET_STEP', step: 'images' });
     } else {
       dispatch({ type: 'SET_STEP', step: 'questionnaire' });
@@ -92,3 +113,6 @@ export default function InstructionsPage() {
     </div>
   );
 }
+
+// After questionnaire, for pretest-matching and pretest-not-matching, go to pretest
+// This logic should be in the reducer or in the QuestionnairePage handleSubmit

@@ -55,11 +55,17 @@ export default function QuestionnairePage() {
       return;
     }
 
+    // For pretest-matching and pretest-not-matching, go to pretest after questionnaire
+    if (state.data.group === 'pretest-matching' || state.data.group === 'pretest-not-matching') {
+      dispatch({ type: 'SET_STEP', step: 'pretest' });
+      return;
+    }
+
     // Generate images based on responses and group
     let imageData;
-    if (state.data.group === 'pretest-matching' || state.data.group === 'no-pretest-matching') {
+    if (state.data.group === 'no-pretest-matching') {
       imageData = getImagesByResponses(responses, 'matching');
-    } else if (state.data.group === 'pretest-not-matching' || state.data.group === 'no-pretest-not-matching') {
+    } else if (state.data.group === 'no-pretest-not-matching') {
       imageData = getImagesByResponses(responses, 'opposite');
     } else {
       imageData = getImagesByResponses(responses, 'matching');

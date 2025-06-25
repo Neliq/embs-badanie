@@ -1,5 +1,5 @@
 // 'use client';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useExperiment } from '@/contexts/ExperimentContext';
 import { ImageRating } from '@/types/experiment';
 import Image from 'next/image';
@@ -8,15 +8,37 @@ import { Button } from '@/components/ui/button';
 import { getImagesByResponses } from '@/lib/experiment-utils';
 import questionsData from '@/data/questions.json';
 
-// Pretest images: always 1.png from both test-generated and test-authentic
-const pretestImages = [
-  { imagePath: '/images/test-generated/1.png', isActuallyAI: true },
-  { imagePath: '/images/test-authentic/1.png', isActuallyAI: false },
-];
+// Fisher-Yates shuffle algorithm
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// Dynamically get all images from test-generated and test-authentic
+function getPretestImages() {
+  const files = ["1.png", "2.png", "3.png"];
+  const generated = files.map(file => ({
+    imagePath: `/images/test-generated/${file}`,
+    isActuallyAI: true
+  }));
+  const authentic = files.map(file => ({
+    imagePath: `/images/test-authentic/${file}`,
+    isActuallyAI: false
+  }));
+  // Combine and deduplicate by imagePath
+  const all = [...generated, ...authentic];
+  const unique = Array.from(new Map(all.map(img => [img.imagePath, img])).values());
+  return shuffleArray(unique);
+}
 
 export default function PretestPage() {
   const { state, dispatch } = useExperiment();
   const [aiProbability, setAiProbability] = useState([50]);
+  const pretestImages = useMemo(() => getPretestImages(), []);
   const currentImageData = pretestImages[state.currentImageIndex] || null;
   const isLastImage = state.currentImageIndex >= pretestImages.length - 1;
   const imageNumber = state.currentImageIndex + 1;
@@ -33,7 +55,21 @@ export default function PretestPage() {
     if (isLastImage) {
       // Move to next step depending on group
       if (state.data.group === 'pretest-matching' || state.data.group === 'pretest-not-matching') {
-        dispatch({ type: 'SET_STEP', step: 'questionnaire' });
+        // After pretest, go to main images (not questionnaire)
+        let imageData;
+        if (state.data.group === 'pretest-matching') {
+          imageData = getImagesByResponses(
+            state.data.opinionResponses,
+            'matching'
+          );
+        } else {
+          imageData = getImagesByResponses(
+            state.data.opinionResponses,
+            'opposite'
+          );
+        }
+        dispatch({ type: 'SET_IMAGES', images: imageData });
+        dispatch({ type: 'SET_STEP', step: 'images' });
       } else if (state.data.group === 'all-images-no-questionnaire') {
         // Set all images: pretest, matching, not-matching
         const allImages = [
